@@ -19,7 +19,7 @@ export default async function BlogPost({
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 mt-16">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-[70%]">
             <article className="prose dark:prose-invert max-w-none">
