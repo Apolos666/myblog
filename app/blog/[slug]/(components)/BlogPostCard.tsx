@@ -7,18 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-interface BlogPost {
-  id: number;
-  title: string;
-  excerpt: string;
-  date: string;
-  tags: string[];
-  image: string;
-}
+import { IBlogPostWithId } from "@/data/schema";
+import Link from "next/link";
 
 interface BlogPostCardProps {
-  post: BlogPost;
+  post: IBlogPostWithId;
 }
 
 export function BlogPostCard({ post }: BlogPostCardProps) {
@@ -28,9 +21,9 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
         <CardTitle>{post.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative w-full h-48 mb-4">
+        <div className="relative w-full h-80 mb-4">
           <Image
-            src={post.image}
+            src={post.coverImageUrl}
             alt={post.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -50,7 +43,9 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button variant="outline">Read More</Button>
+        <Link href={`/blog/${post._id}`} passHref>
+          <Button variant="outline">Đọc thêm</Button>
+        </Link>
       </CardFooter>
     </Card>
   );

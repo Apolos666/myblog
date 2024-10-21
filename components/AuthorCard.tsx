@@ -9,10 +9,10 @@ export function AuthorCard() {
       </CardHeader>
       <CardContent className="flex flex-col items-center text-center">
         <Avatar className="w-24 h-24 mb-4">
-          <AvatarImage src="/placeholder.svg" alt="Author" />
-          <AvatarFallback>JD</AvatarFallback>
+          <AvatarImage src="/author-avatar.jpg" alt="Author" />
+          <AvatarFallback>AP</AvatarFallback>
         </Avatar>
-        <h3 className="font-semibold text-lg mb-2">John Doe</h3>
+        <h3 className="font-semibold text-lg mb-2">Apolos</h3>
         <p className="text-muted-foreground">
           Passionate developer and tech enthusiast. Sharing knowledge and
           experiences in the world of programming.

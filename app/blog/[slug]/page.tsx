@@ -1,3 +1,5 @@
+"use client";
+
 import { Suspense } from "react";
 import { BlogHeader } from "@/app/blog/[slug]/(components)/BlogHeader";
 import { BlogContent } from "@/app/blog/[slug]/(components)/BlogContent";

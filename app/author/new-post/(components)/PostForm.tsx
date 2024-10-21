@@ -1,11 +1,15 @@
+"use client";
+
 import { useState, useCallback } from "react";
-import { Save, Eye, Pencil } from "lucide-react";
+import { Save, Eye, Pencil, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { PostMetadata } from "./PostMetadata";
 import { MarkdownEditor } from "./MarkdownEditor";
 import { MarkdownPreview } from "./MarkdownPreview";
 import { PostData } from "../(types)/types";
+import { useToast } from "@/hooks/use-toast";
+import { savePost } from "../actions";
 
 export function PostForm() {
   const [postData, setPostData] = useState<PostData>({
@@ -17,6 +21,8 @@ export function PostForm() {
     coverImage: "",
   });
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -30,10 +36,25 @@ export function PostForm() {
     setPostData((prev) => ({ ...prev, category: value }));
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitting post data:", postData);
-    // Thêm logic gửi dữ liệu đến API ở đây
+    setIsLoading(true);
+    try {
+      await savePost(postData);
+      toast({
+        title: "Thành công",
+        description: "Bài viết đã được lưu thành công.",
+      });
+    } catch (error) {
+      console.error("Lỗi khi lưu bài viết:", error);
+      toast({
+        title: "Lỗi",
+        description: "Có lỗi xảy ra khi lưu bài viết. Vui lòng thử lại.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -72,9 +93,13 @@ export function PostForm() {
         </div>
       </div>
       <div className="flex justify-end">
-        <Button type="submit">
-          <Save className="mr-2 h-4 w-4" />
-          Lưu bài viết
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
+          {isLoading ? "Đang lưu..." : "Lưu bài viết"}
         </Button>
       </div>
     </form>
