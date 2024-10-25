@@ -1,5 +1,3 @@
-"use client";
-
 import { Suspense } from "react";
 import { BlogHeader } from "@/app/blog/[slug]/(components)/BlogHeader";
 import { BlogContent } from "@/app/blog/[slug]/(components)/BlogContent";
@@ -8,14 +6,19 @@ import { Sidebar } from "@/app/blog/[slug]/(components)/Sidebar";
 import CommentSection from "@/app/blog/[slug]/(components)/CommentSection";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { getBlogPost } from "../mockData";
+import { notFound } from "next/navigation";
+import { getBlogPostById } from "./actions";
 
 export default async function BlogPost({
   params,
 }: {
   params: { slug: string };
 }) {
-  const blogPost = await getBlogPost(params.slug);
+  const blogPost = await getBlogPostById(params.slug);
+
+  if (!blogPost) {
+    notFound();
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -28,17 +31,14 @@ export default async function BlogPost({
               <BlogHeader
                 title={blogPost.title}
                 author={blogPost.author}
-                date={blogPost.date}
+                date={blogPost.createdAt.toISOString().split("T")[0]}
               />
               <BlogContent content={blogPost.content} />
             </article>
 
-            <BlogNavigation
-              previousPost={blogPost.previousPost}
-              nextPost={blogPost.nextPost}
-            />
+            <BlogNavigation previousPost={undefined} nextPost={undefined} />
 
-            <Suspense fallback={<div>Loading comments...</div>}>
+            <Suspense fallback={<div>Đang tải bình luận...</div>}>
               <CommentSection slug={params.slug} />
             </Suspense>
           </div>
