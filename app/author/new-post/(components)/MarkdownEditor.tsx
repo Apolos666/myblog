@@ -170,9 +170,18 @@ export function MarkdownEditor({
         <MarkdownButton
           icon={<Code className="h-4 w-4" />}
           tooltip="Mã inline"
-          prefix="`"
-          suffix="`"
-          placeholder="code"
+          prefix="```csharp"
+          suffix="```"
+          placeholder={`
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Xin chào, thế giới!");
+    }
+} \n`}
         />
         <MarkdownButton
           icon={<ListOrdered className="h-4 w-4" />}
