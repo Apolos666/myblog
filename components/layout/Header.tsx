@@ -2,7 +2,7 @@
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { BookDown } from "lucide-react";
+import { BookDown, BookmarkIcon } from "lucide-react";
 import Link from "next/link";
 
 export function Header() {
@@ -23,6 +23,11 @@ export function Header() {
                   label="Create new post"
                   labelIcon={<BookDown size={16} />}
                   href="/author/new-post"
+                />
+                <UserButton.Link
+                  label="My Collections"
+                  labelIcon={<BookmarkIcon size={16} />}
+                  href="/user/collections"
                 />
               </UserButton.MenuItems>
             </UserButton>

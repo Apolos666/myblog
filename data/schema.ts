@@ -44,7 +44,9 @@ export interface IBlogPostWithId extends Omit<IBlogPostData, 'comments'> {
 }
 
 // Định nghĩa kiểu dữ liệu cho document bài viết blog trong MongoDB
-export interface IBlogPostDocument extends IBlogPostData, Document {}
+export interface IBlogPostDocument extends IBlogPostData, Document {
+  _id: mongoose.Types.ObjectId;
+}
 
 // Schema Mongoose cho bài viết blog
 const BlogPostSchema: Schema = new Schema({
@@ -59,9 +61,39 @@ const BlogPostSchema: Schema = new Schema({
   comments: [CommentSchema]
 });
 
-// Tạo và xuất các model Mongoose cho Comment và BlogPost
-export const Comment: Model<ICommentDocument> = mongoose.models.Comment || model<ICommentDocument>('Comment', CommentSchema);
-export const BlogPost: Model<IBlogPostDocument> = mongoose.models.BlogPost || model<IBlogPostDocument>('BlogPost', BlogPostSchema);
+// Định nghĩa cấu trúc dữ liệu cho bookmark
+export interface IBookmarkData {
+  userId: string;
+  postId: string;
+  collectionId: mongoose.Types.ObjectId;
+}
+
+export interface IBookmarkDocument extends IBookmarkData, Document {
+  _id: mongoose.Types.ObjectId;
+}
+
+const BookmarkSchema: Schema = new Schema({
+  userId: { type: String, required: true },
+  postId: { type: String, required: true },
+  collectionId: { type: Schema.Types.ObjectId, ref: 'Collection', required: true },
+});
+
+// Định nghĩa cấu trúc dữ liệu cho collection
+export interface ICollectionData {
+  userId: string;
+  name: string;
+  description?: string;
+}
+
+export interface ICollectionDocument extends ICollectionData, Document {
+  _id: mongoose.Types.ObjectId;
+}
+
+const CollectionSchema: Schema = new Schema({
+  userId: { type: String, required: true },
+  name: { type: String, required: true },
+  description: { type: String },
+});
 
 // Định nghĩa cấu trúc dữ liệu cho người dùng
 export interface IUserData {
@@ -72,8 +104,9 @@ export interface IUserData {
   createdAt: Date;
 }
 
-// Định nghĩa kiểu dữ liệu cho document người dùng trong MongoDB
-export interface IUserDocument extends IUserData, Document {}
+export interface IUserDocument extends IUserData, Document {
+  _id: mongoose.Types.ObjectId;
+}
 
 // Schema Mongoose cho người dùng
 const UserSchema: Schema = new Schema({
@@ -84,5 +117,9 @@ const UserSchema: Schema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-// Tạo và xuất model Mongoose cho User
+// Tạo và xuất các model Mongoose
+export const Comment: Model<ICommentDocument> = mongoose.models.Comment || model<ICommentDocument>('Comment', CommentSchema);
+export const BlogPost: Model<IBlogPostDocument> = mongoose.models.BlogPost || model<IBlogPostDocument>('BlogPost', BlogPostSchema);
 export const User: Model<IUserDocument> = mongoose.models.User || model<IUserDocument>('User', UserSchema);
+export const Bookmark: Model<IBookmarkDocument> = mongoose.models.Bookmark || model<IBookmarkDocument>('Bookmark', BookmarkSchema);
+export const Collection: Model<ICollectionDocument> = mongoose.models.Collection || model<ICollectionDocument>('Collection', CollectionSchema);

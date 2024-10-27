@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { notFound } from "next/navigation";
 import { getBlogPostById } from "./actions";
+import { BookmarkButton } from "@/components/BookmarkButton";
 
 export default async function BlogPost({
   params,
@@ -28,11 +29,16 @@ export default async function BlogPost({
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-[70%]">
             <article className="prose dark:prose-invert max-w-none">
-              <BlogHeader
-                title={blogPost.title}
-                author={blogPost.author}
-                date={blogPost.createdAt.toISOString().split("T")[0]}
-              />
+              <div className="flex flex-col mb-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h1 className="text-3xl font-bold mb-0">{blogPost.title}</h1>
+                  <BookmarkButton postId={blogPost._id} className="scale-125" />
+                </div>
+                <BlogHeader
+                  author={blogPost.author}
+                  date={blogPost.createdAt.toISOString().split("T")[0]}
+                />
+              </div>
               <BlogContent content={blogPost.content} />
             </article>
 
