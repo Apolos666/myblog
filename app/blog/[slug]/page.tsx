@@ -39,7 +39,10 @@ export default async function BlogPost({
             <BlogNavigation previousPost={undefined} nextPost={undefined} />
 
             <Suspense fallback={<div>Đang tải bình luận...</div>}>
-              <CommentSection slug={params.slug} />
+              <CommentSection
+                slug={params.slug}
+                initialComments={blogPost.comments}
+              />
             </Suspense>
           </div>
 

@@ -1,7 +1,7 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, IBlogPostWithId } from "@/data/schema";
+import { BlogPost, IBlogPostWithId, ICommentWithId, Comment, ICommentDocument } from "@/data/schema";
 
 export async function getBlogPostById(id: string): Promise<IBlogPostWithId | null> {
   await dbConnect();
@@ -19,5 +19,30 @@ export async function getBlogPostById(id: string): Promise<IBlogPostWithId | nul
       ...comment,
       _id: comment._id.toString(),
     })),
+  };
+}
+
+export async function addComment(postId: string, username: string, content: string): Promise<ICommentWithId> {
+  await dbConnect();
+
+  const post = await BlogPost.findById(postId);
+  if (!post) {
+    throw new Error("Bài viết không tồn tại");
+  }
+
+  const newComment: ICommentDocument = new Comment({
+    username,
+    content,
+    createdAt: new Date(),
+  });
+
+  post.comments.push(newComment);
+  await post.save();
+
+  return {
+    _id: newComment._id.toString(),
+    username: newComment.username,
+    content: newComment.content,
+    createdAt: newComment.createdAt,
   };
 }

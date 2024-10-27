@@ -10,7 +10,9 @@ export interface ICommentWithId extends ICommentData {
   _id: string;
 }
 
-export interface ICommentDocument extends ICommentData, Document {}
+export interface ICommentDocument extends ICommentData, Document {
+  _id: mongoose.Types.ObjectId;
+}
 
 const CommentSchema: Schema = new Schema({
   username: { type: String, required: true },
@@ -27,11 +29,12 @@ export interface IBlogPostData {
   content: string;
   author: string;
   createdAt: Date;
-  comments: ICommentWithId[];
+  comments: ICommentDocument[]; 
 }
 
-export interface IBlogPostWithId extends IBlogPostData {
+export interface IBlogPostWithId extends Omit<IBlogPostData, 'comments'> {
   _id: string;
+  comments: ICommentWithId[]; 
 }
 
 export interface IBlogPostDocument extends IBlogPostData, Document {}
