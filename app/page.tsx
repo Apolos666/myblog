@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { AuthorCard } from "@/components/AuthorCard";
 import { NewsletterSubscribe } from "@/components/NewsletterSubscribe";
+import { SearchCard } from "@/components/SearchCard";
 import { Header } from "@/components/layout/Header";
 import { BlogPostCard } from "@/app/blog/[slug]/(components)/BlogPostCard";
 import { Footer } from "@/components/layout/Footer";
@@ -34,6 +35,7 @@ export default async function Home({
           <div className="space-y-8">
             <AuthorCard />
             <NewsletterSubscribe />
+            <SearchCard />
           </div>
         </div>
       </main>

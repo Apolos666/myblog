@@ -1,30 +1,25 @@
-"use client";
+import { searchBlogPosts } from "./actions";
+import { ClientSearchPage } from "./(components)/ClientSearchPage";
 
-import { useState } from "react";
-import { SearchBar } from "@/components/search/SearchBar";
-import { SearchResults } from "@/components/search/SearchResults";
-import { TagFilter } from "@/components/search/TagFilter";
-
-export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-  };
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: { q?: string; category?: string; tags?: string; page?: string };
+}) {
+  const page = Number(searchParams.page) || 1;
+  const { posts, totalPages } = await searchBlogPosts(
+    searchParams.q || "",
+    searchParams.category || "",
+    searchParams.tags?.split(",") || [],
+    page,
+    5
+  );
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Search Blog Posts</h1>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div className="md:col-span-3 space-y-4">
-          <SearchBar onSearch={handleSearch} />
-          <SearchResults searchTerm={searchTerm} selectedTags={selectedTags} />
-        </div>
-        <div>
-          <TagFilter onTagsChange={setSelectedTags} />
-        </div>
-      </div>
-    </main>
+    <ClientSearchPage
+      initialPosts={posts}
+      totalPages={totalPages}
+      searchParams={searchParams}
+    />
   );
 }
