@@ -36,6 +36,7 @@ export default async function BlogPost({
                 </div>
                 <BlogHeader
                   author={blogPost.author}
+                  userId={blogPost.userId}
                   date={blogPost.createdAt.toISOString().split("T")[0]}
                 />
               </div>

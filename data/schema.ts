@@ -33,7 +33,7 @@ export interface IBlogPostData {
   coverImageUrl: string;
   content: string;
   author: string;
-  userId: string; // Thêm trường userId
+  userId: string; 
   createdAt: Date;
   comments: ICommentDocument[]; 
 }
