@@ -33,6 +33,7 @@ export interface IBlogPostData {
   coverImageUrl: string;
   content: string;
   author: string;
+  userId: string; // Thêm trường userId
   createdAt: Date;
   comments: ICommentDocument[]; 
 }
@@ -57,6 +58,7 @@ const BlogPostSchema: Schema = new Schema({
   coverImageUrl: { type: String, required: true },
   content: { type: String, required: true },
   author: { type: String, required: true },
+  userId: { type: String, required: true }, // Thêm trường userId
   createdAt: { type: Date, default: Date.now },
   comments: [CommentSchema]
 });

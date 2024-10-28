@@ -1,11 +1,11 @@
 "use client";
 
 import { Suspense } from "react";
-import { SearchResults } from "@/components/search/SearchResults";
+import { SearchResults } from "@/app/search/(components)/SearchResults";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PaginationWrapper } from "@/components/PaginationWrapper";
-import { SearchForm } from "@/components/search/SearchForm";
+import { SearchForm } from "@/app/search/(components)/SearchForm";
 import { IBlogPostWithId } from "@/data/schema";
 
 interface ClientSearchPageProps {
