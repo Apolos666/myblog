@@ -9,6 +9,11 @@ module.exports = {
     return config;
   },
   images: {
-    domains: ['images.viblo.asia'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
   },
 };
