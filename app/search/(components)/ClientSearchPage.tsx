@@ -6,10 +6,10 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { PaginationWrapper } from "@/components/PaginationWrapper";
 import { SearchForm } from "@/app/search/(components)/SearchForm";
-import { IBlogPostWithId } from "@/data/schema";
+import { IBlogPost } from "@/data/schema";
 
 interface ClientSearchPageProps {
-  initialPosts: IBlogPostWithId[];
+  initialPosts: IBlogPost[];
   totalPages: number;
   searchParams: {
     q?: string;

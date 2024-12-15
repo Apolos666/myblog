@@ -1,7 +1,8 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, IBlogPostWithId } from "@/data/schema";
+import { BlogPost, IBlogPost, IComment } from "@/data/schema";
+import mongoose from "mongoose";
 
 interface AuthorInfo {
   username: string;
@@ -16,7 +17,7 @@ export async function getAuthorPosts(
   page: number = 1,
   limit: number = 10
 ): Promise<{
-  posts: IBlogPostWithId[];
+  posts: IBlogPost[];
   totalPages: number;
   authorInfo: AuthorInfo;
 }> {
@@ -49,14 +50,14 @@ export async function getAuthorPosts(
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
-    .lean();
+    .lean() as (IBlogPost & { _id: mongoose.Types.ObjectId })[];
 
-  const posts: IBlogPostWithId[] = rawPosts.map((post) => ({
+  const posts = rawPosts.map((post) => ({
     ...post,
     _id: post._id.toString(),
     comments: post.comments.map((comment) => ({
       ...comment,
-      _id: comment._id.toString(),
+      _id: (comment._id as mongoose.Types.ObjectId).toString(),
     })),
   }));
 

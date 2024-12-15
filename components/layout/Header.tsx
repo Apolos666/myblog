@@ -11,7 +11,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href={"/"}>
           <h1 className="text-2xl font-bold text-foreground">
-            Apolos Tech Blog
+            My Tech Blog
           </h1>
         </Link>
         <div className="flex justify-between space-x-4">

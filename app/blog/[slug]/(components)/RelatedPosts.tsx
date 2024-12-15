@@ -1,12 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface RelatedPost {
-  id: string;
-  title: string;
-  excerpt: string;
-}
-
 async function fetchRelatedPosts() {
   // Implement logic to fetch related posts
   // This is a placeholder

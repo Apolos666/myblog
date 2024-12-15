@@ -1,7 +1,8 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, IBlogPostWithId } from "@/data/schema";
+import { BlogPost, IBlogPost, IComment } from "@/data/schema";
+import mongoose from "mongoose";
 
 export async function searchBlogPosts(
   query: string,
@@ -9,7 +10,7 @@ export async function searchBlogPosts(
   tags: string[],
   page: number = 1,
   limit: number = 5
-): Promise<{ posts: IBlogPostWithId[]; totalPages: number }> {
+): Promise<{ posts: IBlogPost[]; totalPages: number }> {
   await dbConnect();
 
   const searchQuery: Record<string, any> = {};
@@ -38,12 +39,21 @@ export async function searchBlogPosts(
     .limit(limit)
     .lean();
 
-  const posts: IBlogPostWithId[] = rawPosts.map((post) => ({
+  const posts: IBlogPost[] = rawPosts.map((post) => ({
     ...post,
-    _id: post._id.toString(),
-    comments: post.comments.map((comment) => ({
+    _id: (post._id as mongoose.Types.ObjectId).toString(),
+    title: post.title,
+    excerpt: post.excerpt,
+    category: post.category,
+    tags: post.tags,
+    coverImageUrl: post.coverImageUrl,
+    content: post.content,
+    author: post.author,
+    userId: post.userId,
+    createdAt: post.createdAt,
+    comments: post.comments.map((comment: IComment & { _id: mongoose.Types.ObjectId }) => ({
       ...comment,
-      _id: comment._id.toString(),
+      _id: (comment._id as mongoose.Types.ObjectId).toString(),
     })),
   }));
 

@@ -1,8 +1,8 @@
 import { BlogPostCard } from "@/app/blog/[slug]/(components)/BlogPostCard";
-import { IBlogPostWithId } from "@/data/schema";
+import { IBlogPost } from "@/data/schema";
 
 interface SearchResultsProps {
-  posts: IBlogPostWithId[];
+  posts: IBlogPost[];
 }
 
 export function SearchResults({ posts }: SearchResultsProps) {
@@ -17,7 +17,7 @@ export function SearchResults({ posts }: SearchResultsProps) {
   return (
     <div className="space-y-8">
       {posts.map((post) => (
-        <BlogPostCard key={post._id} post={post} />
+        <BlogPostCard key={post._id.toString()} post={post} />
       ))}
     </div>
   );

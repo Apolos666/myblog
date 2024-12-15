@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { IBlogPostWithId } from "@/data/schema";
+import { IBlogPost } from "@/data/schema";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 interface PostsGridProps {
-  posts: IBlogPostWithId[];
+  posts: IBlogPost[];
 }
 
 export function PostsGrid({ posts }: PostsGridProps) {
@@ -20,7 +20,7 @@ export function PostsGrid({ posts }: PostsGridProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {posts.map((post) => (
-        <Link key={post._id} href={`/blog/${post._id}`}>
+        <Link key={post._id.toString()} href={`/blog/${post._id}`}>
           <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
             <div className="relative aspect-video">
               <Image

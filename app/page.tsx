@@ -27,7 +27,7 @@ export default async function Home({
             <SearchBar />
             <Suspense fallback={<div>Đang tải...</div>}>
               {posts.map((post) => (
-                <BlogPostCard key={post._id} post={post} />
+                <BlogPostCard key={post._id.toString()} post={post} />
               ))}
             </Suspense>
             <PaginationWrapper totalPages={totalPages} />

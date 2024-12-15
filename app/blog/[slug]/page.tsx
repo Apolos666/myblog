@@ -7,19 +7,24 @@ import CommentSection from "@/app/blog/[slug]/(components)/CommentSection";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { notFound } from "next/navigation";
-import { getBlogPostById } from "./actions";
+import { getBlogPost } from "./actions";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import { EditButton } from "./(components)/EditButton";
+import { auth } from '@clerk/nextjs/server'
 
 export default async function BlogPost({
   params,
 }: {
   params: { slug: string };
 }) {
-  const blogPost = await getBlogPostById(params.slug);
+  const blogPost = await getBlogPost(params.slug);
+  const { userId } = auth();
 
   if (!blogPost) {
     notFound();
   }
+
+  const isAuthor = userId === blogPost.userId;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -32,7 +37,10 @@ export default async function BlogPost({
               <div className="flex flex-col mb-6">
                 <div className="flex justify-between items-center mb-4">
                   <h1 className="text-3xl font-bold mb-0">{blogPost.title}</h1>
-                  <BookmarkButton postId={blogPost._id} className="scale-125" />
+                  <div className="flex items-center gap-2">
+                    {isAuthor && <EditButton postId={blogPost._id} className="scale-125 mr-4" />}
+                    <BookmarkButton postId={blogPost._id} className="scale-125" />
+                  </div>
                 </div>
                 <BlogHeader
                   author={blogPost.author}

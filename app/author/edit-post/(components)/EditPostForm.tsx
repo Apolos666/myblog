@@ -4,25 +4,21 @@ import { useState, useCallback } from "react";
 import { Save, Eye, Pencil, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { PostMetadata } from "./PostMetadata";
-import { MarkdownEditor } from "./MarkdownEditor";
-import { MarkdownPreview } from "./MarkdownPreview";
-import { PostData } from "../(types)/types";
+import { PostMetadata } from "../../new-post/(components)/PostMetadata";
+import { MarkdownEditor } from "../../new-post/(components)/MarkdownEditor";
+import { MarkdownPreview } from "../../new-post/(components)/MarkdownPreview";
+import { PostData } from "../../new-post/(types)/types";
 import { useToast } from "@/hooks/use-toast";
-import { savePost } from "../actions";
+import { updatePost } from "../actions";
 import { useRouter } from "next/navigation";
 
-const initialPostData: PostData = {
-  title: "",
-  excerpt: "",
-  content: "",
-  category: "",
-  tags: "",
-  coverImage: "",
-};
+interface EditPostFormProps {
+  post: PostData;
+  postId: string;
+}
 
-export function PostForm() {
-  const [postData, setPostData] = useState<PostData>(initialPostData);
+export function EditPostForm({ post, postId }: EditPostFormProps) {
+  const [postData, setPostData] = useState<PostData>(post);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -44,17 +40,17 @@ export function PostForm() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const newPost = await savePost(postData);
+      await updatePost(postId, postData);
       toast({
         title: "Thành công",
-        description: "Bài viết đã được tạo thành công.",
+        description: "Bài viết đã được cập nhật thành công.",
       });
-      router.push(`/blog/${newPost._id}`);
+      router.push(`/blog/${postId}`);
     } catch (error) {
-      console.error("Lỗi khi tạo bài viết:", error);
+      console.error("Lỗi khi cập nhật bài viết:", error);
       toast({
         title: "Lỗi",
-        description: "Có lỗi xảy ra khi tạo bài viết. Vui lòng thử lại.",
+        description: "Có lỗi xảy ra khi cập nhật bài viết. Vui lòng thử lại.",
         variant: "destructive",
       });
     } finally {
@@ -104,9 +100,9 @@ export function PostForm() {
           ) : (
             <Save className="mr-2 h-4 w-4" />
           )}
-          {isLoading ? "Đang lưu..." : "Tạo bài viết"}
+          {isLoading ? "Đang cập nhật..." : "Cập nhật bài viết"}
         </Button>
       </div>
     </form>
   );
-}
+} 

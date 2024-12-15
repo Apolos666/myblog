@@ -5,23 +5,24 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
-import { ICommentWithId } from "@/data/schema";
+import { IComment } from "@/data/schema";
 import { addComment } from "../actions";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, SignedIn, SignedOut } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface CommentSectionProps {
   slug: string;
-  initialComments: ICommentWithId[];
+  initialComments: IComment[];
 }
 
 export default function CommentSection({
   slug,
   initialComments,
 }: CommentSectionProps) {
-  const [comments, setComments] = useState<ICommentWithId[]>(initialComments);
+  const [comments, setComments] = useState<IComment[]>(initialComments);
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
   const { user } = useUser();
@@ -42,7 +43,8 @@ export default function CommentSection({
           title: "Bình luận đã được thêm",
           description: "Cảm ơn bạn đã chia sẻ ý kiến!",
         });
-      } catch (error) {
+      } catch (err) {
+        console.error("Error adding comment:", err);
         toast({
           title: "Lỗi",
           description: "Không thể thêm bình luận. Vui lòng thử lại sau.",
@@ -58,7 +60,7 @@ export default function CommentSection({
     <div className="mt-12">
       <h2 className="text-2xl font-bold mb-4">Bình luận</h2>
       {comments.map((comment) => (
-        <div key={comment._id} className="mb-6 p-4 bg-muted rounded-lg">
+        <div key={comment._id.toString()} className="mb-6 p-4 bg-muted rounded-lg">
           <div className="flex items-center space-x-4 mb-2">
             <Avatar>
               <AvatarImage
@@ -70,7 +72,7 @@ export default function CommentSection({
             <div>
               <p className="font-semibold">{comment.username}</p>
               <p className="text-sm text-muted-foreground">
-                {new Date(comment.createdAt).toLocaleDateString()}
+                {formatDate(comment.createdAt.toISOString())}
               </p>
             </div>
           </div>

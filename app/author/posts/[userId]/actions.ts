@@ -1,7 +1,8 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, IBlogPostWithId } from "@/data/schema";
+import { BlogPost, IBlogPost } from "@/data/schema";
+import mongoose from "mongoose";
 
 interface SearchQueryType {
   userId: string;
@@ -24,7 +25,7 @@ export async function getAuthorPosts(
   page: number = 1,
   limit: number = 12 // Tăng limit lên để grid đẹp hơn
 ): Promise<{
-  posts: IBlogPostWithId[];
+  posts: IBlogPost[];
   totalPages: number;
   authorInfo: AuthorInfo;
 }> {
@@ -49,7 +50,8 @@ export async function getAuthorPosts(
     searchQuery.tags = { $in: tags };
   }
 
-  const firstPost = await BlogPost.findOne({ userId }).lean();
+  const firstPost = await BlogPost.findOne({ userId })
+    .lean() as (IBlogPost & { _id: mongoose.Types.ObjectId });
   const totalPosts = await BlogPost.countDocuments({ userId });
   const filteredTotalPosts = await BlogPost.countDocuments(searchQuery);
   const totalPages = Math.ceil(filteredTotalPosts / limit);
@@ -58,9 +60,9 @@ export async function getAuthorPosts(
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
-    .lean();
+    .lean() as (IBlogPost & { _id: mongoose.Types.ObjectId })[];;
 
-  const posts: IBlogPostWithId[] = rawPosts.map((post) => ({
+  const posts: IBlogPost[] = rawPosts.map((post) => ({
     ...post,
     _id: post._id.toString(),
     comments: post.comments.map((comment) => ({
@@ -70,7 +72,7 @@ export async function getAuthorPosts(
   }));
 
   const authorInfo: AuthorInfo = {
-    username: firstPost?.author || "Unknown Author",
+    username: firstPost.author || "Unknown Author",
     userId,
     totalPosts,
   };

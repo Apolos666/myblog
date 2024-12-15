@@ -68,7 +68,6 @@ export function BookmarkButton({ postId, className }: BookmarkButtonProps) {
       try {
         await addBookmark(user.id, postId, collectionId);
         const details = await getBookmarkDetails(user.id, postId);
-        console.log("Updated bookmark details:", details);
         setBookmarkDetails(details);
         toast({
           title: "Đã lưu",
@@ -130,19 +129,16 @@ export function BookmarkButton({ postId, className }: BookmarkButtonProps) {
   };
 
   const isInCollection = (collectionId: string) => {
-    console.log("Checking collection:", collectionId);
-    console.log("Current bookmarkDetails:", bookmarkDetails);
-    return bookmarkDetails.some((detail) => {
-      const matches = detail.collectionId === collectionId;
-      console.log(`Collection ${collectionId} matches: ${matches}`);
-      return matches;
-    });
+    console.log('Checking collection:', collectionId);
+    console.log('Current bookmarkDetails:', bookmarkDetails);
+    const exists = bookmarkDetails.some(detail => detail.collectionId === collectionId);
+    console.log('Exists:', exists);
+    return exists;
   };
 
   const getBookmarkId = (collectionId: string) => {
-    return bookmarkDetails.find(
-      (detail) => detail.collectionId === collectionId
-    )?.bookmarkId;
+    const detail = bookmarkDetails.find(detail => detail.collectionId === collectionId);
+    return detail?.bookmarkId;
   };
 
   return (
@@ -170,23 +166,24 @@ export function BookmarkButton({ postId, className }: BookmarkButtonProps) {
               const inCollection = isInCollection(collection.id);
               const bookmarkId = getBookmarkId(collection.id);
 
-              console.log(`Collection ${collection.name}:`, {
-                collectionId: collection.id,
-                inCollection,
-                bookmarkId,
-                bookmarkDetails,
-              });
-
               return (
                 <div key={collection.id} className="flex items-center gap-2">
                   <Button
-                    onClick={() =>
-                      !inCollection && handleBookmark(collection.id)
-                    }
-                    variant={inCollection ? "default" : "outline"}
-                    className="flex-1 justify-start"
+                    onClick={() => !inCollection && handleBookmark(collection.id)}
+                    variant={inCollection ? "secondary" : "outline"}
+                    className={cn(
+                      "flex-1 justify-start",
+                      inCollection && "font-medium"
+                    )}
                   >
-                    {collection.name}
+                    {inCollection ? (
+                      <div className="flex items-center gap-2">
+                        <Bookmark className="h-4 w-4" />
+                        {collection.name}
+                      </div>
+                    ) : (
+                      collection.name
+                    )}
                   </Button>
                   {inCollection && bookmarkId && (
                     <Button

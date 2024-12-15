@@ -1,7 +1,8 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, IBlogPostWithId } from "@/data/schema";
+import { BlogPost, IBlogPost } from "@/data/schema";
+import mongoose from "mongoose";
 
 export async function searchUserPosts(
   userId: string,
@@ -10,7 +11,7 @@ export async function searchUserPosts(
   tags: string[],
   page: number = 1,
   limit: number = 10
-): Promise<{ posts: IBlogPostWithId[]; totalPages: number }> {
+): Promise<{ posts: IBlogPost[]; totalPages: number }> {
   await dbConnect();
 
   const searchQuery: Record<string, any> = {
@@ -39,9 +40,9 @@ export async function searchUserPosts(
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
-    .lean();
+    .lean() as (IBlogPost & { _id: mongoose.Types.ObjectId })[];
 
-  const posts: IBlogPostWithId[] = rawPosts.map((post) => ({
+  const posts: IBlogPost[] = rawPosts.map((post) => ({
     ...post,
     _id: post._id.toString(),
     comments: post.comments.map((comment) => ({
