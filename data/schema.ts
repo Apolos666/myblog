@@ -7,12 +7,14 @@ interface IComment {
   username: string;
   content: string;
   createdAt: Date;
+  userId: string;
 }
 
 const CommentSchema = new Schema<IComment>({
   username: { type: String, required: true },
   content: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  userId: { type: String, required: true }
 });
 
 // BlogPost Schema

@@ -12,6 +12,8 @@ import { useUser, SignedIn, SignedOut } from "@clerk/nextjs";
 import { SignInButton } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@clerk/nextjs";
+import { DeleteCommentButton } from './DeleteCommentButton'
 
 interface CommentSectionProps {
   slug: string;
@@ -27,6 +29,7 @@ export default function CommentSection({
   const { toast } = useToast();
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { userId } = useAuth();
 
   const handleCommentSubmit = async () => {
     if (newComment.trim() && user) {
@@ -35,7 +38,8 @@ export default function CommentSection({
         const comment = await addComment(
           slug,
           user.fullName || "Người dùng ẩn danh",
-          newComment
+          newComment,
+          userId!
         );
         setComments([...comments, comment]);
         setNewComment("");
@@ -61,20 +65,30 @@ export default function CommentSection({
       <h2 className="text-2xl font-bold mb-4">Bình luận</h2>
       {comments.map((comment) => (
         <div key={comment._id.toString()} className="mb-6 p-4 bg-muted rounded-lg">
-          <div className="flex items-center space-x-4 mb-2">
-            <Avatar>
-              <AvatarImage
-                src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.username}`}
-                alt={comment.username}
-              />
-              <AvatarFallback>{comment.username[0]}</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-semibold">{comment.username}</p>
-              <p className="text-sm text-muted-foreground">
-                {formatDate(comment.createdAt.toISOString())}
-              </p>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center space-x-4">
+              <Avatar>
+                <AvatarImage
+                  src={`https://api.dicebear.com/6.x/initials/svg?seed=${comment.username}`}
+                  alt={comment.username}
+                />
+                <AvatarFallback>{comment.username[0]}</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold">{comment.username}</p>
+                <p className="text-sm text-muted-foreground">
+                  {formatDate(comment.createdAt.toISOString())}
+                </p>
+              </div>
             </div>
+            <DeleteCommentButton
+              commentId={comment._id.toString()}
+              commentUserId={comment.userId}
+              postId={slug}
+              onCommentDeleted={() => {
+                setComments(comments.filter(c => c._id.toString() !== comment._id.toString()))
+              }}
+            />
           </div>
           <ReactMarkdown>{comment.content}</ReactMarkdown>
         </div>

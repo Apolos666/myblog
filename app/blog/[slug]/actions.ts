@@ -1,8 +1,9 @@
 "use server";
 
 import dbConnect from "@/data/dbConnect";
-import { BlogPost, Comment, type IComment, Collection, Bookmark, IBlogPost } from '@/data/schema';
+import { BlogPost, type IComment, Collection, Bookmark, IBlogPost } from '@/data/schema';
 import mongoose from 'mongoose';
+import { revalidatePath } from 'next/cache'
 
 export async function getBlogPost(slug: string) {
   try {
@@ -30,7 +31,8 @@ export async function getBlogPost(slug: string) {
 export async function addComment(
   postId: string,
   username: string,
-  content: string
+  content: string,
+  userId: string
 ): Promise<IComment> {
   await dbConnect();
   
@@ -39,23 +41,21 @@ export async function addComment(
 
   const now = new Date();
   
-  const newComment = new Comment({ 
-    username, 
+  const newComment = {
+    _id: new mongoose.Types.ObjectId(),
+    username,
     content,
-    createdAt: now
-  });
-
-  const serializedComment = {
-    _id: newComment._id.toString(),
-    username: newComment.username,
-    content: newComment.content,
+    userId,
     createdAt: now
   };
 
   post.comments.push(newComment);
   await post.save();
   
-  return serializedComment;
+  return {
+    ...newComment,
+    _id: newComment._id.toString()
+  };
 }
 
 export async function addBookmark(userId: string, postId: string, collectionId: string) {
@@ -141,4 +141,33 @@ export async function removeBookmarkFromCollection(bookmarkId: string) {
     collectionId: deletedBookmark.collectionId._id.toString(),
     collectionName: deletedBookmark.collectionId.name
   };
+}
+
+export async function deleteComment(postId: string, commentId: string) {
+  await dbConnect();
+  
+  try {
+    const post = await BlogPost.findById(postId);
+    if (!post) {
+      throw new Error('Post not found');
+    }
+
+    // Tìm và xóa comment từ mảng comments
+    const commentIndex = post.comments.findIndex(
+      comment => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      throw new Error('Comment not found');
+    }
+
+    post.comments.splice(commentIndex, 1);
+    await post.save();
+    
+    revalidatePath(`/blog/${postId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error deleting comment:', error);
+    return { success: false, error: 'Failed to delete comment' };
+  }
 }

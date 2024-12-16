@@ -44,12 +44,11 @@ export function PostForm() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const newPost = await savePost(postData);
+      await savePost(postData);
       toast({
         title: "Thành công",
         description: "Bài viết đã được tạo thành công.",
       });
-      router.push(`/blog/${newPost._id}`);
     } catch (error) {
       console.error("Lỗi khi tạo bài viết:", error);
       toast({

@@ -37,7 +37,7 @@ export default async function MyPostsPage({
           initialCategory={searchParams.category || ""}
           initialTags={searchParams.tags || ""}
         />
-        <SearchResults posts={posts} />
+        <SearchResults posts={posts} showDeleteButton={true} />
         {totalPages > 1 && (
           <div className="mt-8">
             <PaginationWrapper totalPages={totalPages} />

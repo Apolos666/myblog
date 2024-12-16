@@ -2,7 +2,9 @@
 
 import dbConnect from "@/data/dbConnect";
 import { BlogPost, IBlogPost } from "@/data/schema";
+import { auth } from "@clerk/nextjs/server";
 import mongoose from "mongoose";
+import { revalidatePath } from "next/cache";
 
 export async function searchUserPosts(
   userId: string,
@@ -52,4 +54,29 @@ export async function searchUserPosts(
   }));
 
   return { posts, totalPages };
+}
+
+export async function deletePost(postId: string) {
+  const { userId } = auth();
+  if (!userId) {
+    throw new Error("Unauthorized");
+  }
+
+  try {
+    await dbConnect();
+    const result = await BlogPost.findOneAndDelete({
+      _id: postId,
+      userId: userId, // Ensure user can only delete their own posts
+    });
+
+    if (!result) {
+      return { success: false, error: 'Post not found or unauthorized' };
+    }
+
+    revalidatePath('/author/my-posts');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete post:', error);
+    return { success: false, error: 'Failed to delete post' };
+  }
 }
