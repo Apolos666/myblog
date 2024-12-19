@@ -20,17 +20,17 @@ export function Header() {
             <UserButton>
               <UserButton.MenuItems>
                 <UserButton.Link
-                  label="Create new post"
+                  label="Tạo bài viết"
                   labelIcon={<BookDown size={16} />}
                   href="/author/new-post"
                 />
                 <UserButton.Link
-                  label="My Collections"
+                  label="Collections của tôi"
                   labelIcon={<BookmarkIcon size={16} />}
                   href="/user/collections"
                 />
                 <UserButton.Link
-                  label="My Posts"
+                  label="Bài viết của tôi"
                   labelIcon={<FileText size={16} />}
                   href="/author/my-posts"
                 />

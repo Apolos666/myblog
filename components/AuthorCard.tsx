@@ -5,17 +5,16 @@ export function AuthorCard() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>About the Author</CardTitle>
+        <CardTitle>Về tác giả</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col items-center text-center">
         <Avatar className="w-24 h-24 mb-4">
           <AvatarImage src="/author-avatar.jpg" alt="Author" />
-          <AvatarFallback>AP</AvatarFallback>
+          <AvatarFallback>QA</AvatarFallback>
         </Avatar>
-        <h3 className="font-semibold text-lg mb-2">Apolos</h3>
+        <h3 className="font-semibold text-lg mb-2">Trần Đức Quang & Trương Hồng Anh</h3>
         <p className="text-muted-foreground">
-          Passionate developer and tech enthusiast. Sharing knowledge and
-          experiences in the world of programming.
+          Nhà phát triển đam mê và người yêu công nghệ. Chia sẻ kiến thức và trải nghiệm trong thế giới lập trình.
         </p>
       </CardContent>
     </Card>

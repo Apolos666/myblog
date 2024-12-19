@@ -62,7 +62,12 @@ export default async function BlogPost({
           </div>
 
           <div className="md:w-[30%]">
-            <Sidebar author={blogPost.author} tags={blogPost.tags} />
+            <Sidebar 
+              author={blogPost.author} 
+              authorId={blogPost.userId}
+              postId={blogPost._id}
+              tags={blogPost.tags} 
+            />
           </div>
         </div>
       </main>

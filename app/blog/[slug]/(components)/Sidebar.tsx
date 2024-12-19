@@ -1,12 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DonateDialog } from "@/components/DonateDialog";
 
 interface SidebarProps {
   author: string;
+  authorId: string;
+  postId: string;
   tags: string[];
 }
 
-export function Sidebar({ author, tags }: SidebarProps) {
+export function Sidebar({ author, authorId, postId, tags }: SidebarProps) {
   return (
     <div className="space-y-8">
       <Card>
@@ -28,40 +31,41 @@ export function Sidebar({ author, tags }: SidebarProps) {
             </div>
           </div>
           <p className="text-sm">
-            {author} is a passionate developer with over 10 years of experience
-            in .NET technologies.
+            {author} Là một nhà phát triển đam mê với hơn 10 năm kinh nghiệm trong phát triển phần mềm và các công nghệ hiện đại.
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Advertisement</CardTitle>
+          <CardTitle>Quảng cáo</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="bg-muted h-40 flex items-center justify-center">
-            <p className="text-center">Your Ad Here</p>
+            <p className="text-center">Quảng cáo sẽ hiện ở đây</p>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Support the Author</CardTitle>
+          <CardTitle>Ủng hộ tác giả</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="mb-4">
-            If you found this article helpful, consider supporting the author:
+            Nếu bạn thấy bài viết có ích, hãy ủng hộ tác giả ở đây
           </p>
-          <button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded">
-            Donate
-          </button>
+          <DonateDialog
+            postId={postId}
+            authorId={authorId}
+            authorName={author}
+          />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Related Tags</CardTitle>
+          <CardTitle>Tags liên quan</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">

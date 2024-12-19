@@ -12,14 +12,14 @@ export function NewsletterSubscribe() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Subscribe to Newsletter</CardTitle>
+        <CardTitle>Đăng ký nhận bản tin</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex items-center space-x-2">
           <Input type="email" placeholder="your@email.com" />
           <Button onClick={() => setIsSubscribed(!isSubscribed)}>
             <Mail className="mr-2 h-4 w-4" />
-            {isSubscribed ? "Subscribed" : "Subscribe"}
+            {isSubscribed ? "Đăng ký" : "Đăng ký"}
           </Button>
         </div>
       </CardContent>

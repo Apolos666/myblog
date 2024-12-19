@@ -78,6 +78,7 @@ interface IUser {
   email: string;
   imageUrl?: string;
   createdAt: Date;
+  money: number;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -85,7 +86,8 @@ const UserSchema = new Schema<IUser>({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   imageUrl: String,
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  money: { type: Number, default: 0 }
 });
 
 // Export interfaces for use in application
