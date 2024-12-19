@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -14,34 +14,72 @@ import { Loader2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { DeleteCommentButton } from './DeleteCommentButton'
+import { getPusherClient } from "@/lib/pusher/client";
 
 interface CommentSectionProps {
   slug: string;
   initialComments: IComment[];
 }
 
+// Helper function to ensure consistent date handling
+function normalizeComment(comment: IComment): IComment {
+  return {
+    ...comment,
+    _id: comment._id.toString(),
+    createdAt: comment.createdAt instanceof Date 
+      ? comment.createdAt 
+      : new Date(comment.createdAt)
+  };
+}
+
 export default function CommentSection({
   slug,
   initialComments,
 }: CommentSectionProps) {
-  const [comments, setComments] = useState<IComment[]>(initialComments);
+  // Normalize initial comments
+  const [comments, setComments] = useState<IComment[]>(() => 
+    initialComments.map(normalizeComment)
+  );
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = useAuth();
 
+  useEffect(() => {
+    const pusher = getPusherClient();
+    const channel = pusher.subscribe(`post-${slug}`);
+
+    channel.bind('new-comment', (comment: IComment) => {
+      // Kiểm tra xem comment đã tồn tại chưa
+      setComments(prevComments => {
+        const commentExists = prevComments.some(c => c._id === comment._id);
+        if (commentExists) return prevComments;
+        return [...prevComments, normalizeComment(comment)];
+      });
+    });
+
+    channel.bind('delete-comment', (commentId: string) => {
+      setComments(prevComments => 
+        prevComments.filter(comment => comment._id.toString() !== commentId)
+      );
+    });
+
+    return () => {
+      pusher.unsubscribe(`post-${slug}`);
+    };
+  }, [slug]);
+
   const handleCommentSubmit = async () => {
     if (newComment.trim() && user) {
       setIsSubmitting(true);
       try {
-        const comment = await addComment(
+        await addComment(
           slug,
           user.fullName || "Người dùng ẩn danh",
           newComment,
           userId!
         );
-        setComments([...comments, comment]);
         setNewComment("");
         toast({
           title: "Bình luận đã được thêm",

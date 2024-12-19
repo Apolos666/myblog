@@ -4,6 +4,7 @@ import dbConnect from "@/data/dbConnect";
 import { BlogPost, type IComment, Collection, Bookmark, IBlogPost } from '@/data/schema';
 import mongoose from 'mongoose';
 import { revalidatePath } from 'next/cache'
+import { getPusherInstance } from '@/lib/pusher/server';
 
 export async function getBlogPost(slug: string) {
   try {
@@ -19,7 +20,8 @@ export async function getBlogPost(slug: string) {
       _id: post._id.toString(),
       comments: post.comments.map(comment => ({
         ...comment,
-        _id: comment._id.toString()
+        _id: comment._id.toString(),
+        createdAt: comment.createdAt.toISOString()
       }))
     };
   } catch (error) {
@@ -52,9 +54,18 @@ export async function addComment(
   post.comments.push(newComment);
   await post.save();
   
+  // Broadcast the new comment with ISO string date
+  const pusher = getPusherInstance();
+  await pusher.trigger(`post-${postId}`, 'new-comment', {
+    ...newComment,
+    _id: newComment._id.toString(),
+    createdAt: now.toISOString()
+  });
+
   return {
     ...newComment,
-    _id: newComment._id.toString()
+    _id: newComment._id.toString(),
+    createdAt: now.toISOString()
   };
 }
 
@@ -152,7 +163,6 @@ export async function deleteComment(postId: string, commentId: string) {
       throw new Error('Post not found');
     }
 
-    // Tìm và xóa comment từ mảng comments
     const commentIndex = post.comments.findIndex(
       comment => comment._id.toString() === commentId
     );
@@ -163,6 +173,10 @@ export async function deleteComment(postId: string, commentId: string) {
 
     post.comments.splice(commentIndex, 1);
     await post.save();
+    
+    // Broadcast the comment deletion
+    const pusher = getPusherInstance();
+    await pusher.trigger(`post-${postId}`, 'delete-comment', commentId);
     
     revalidatePath(`/blog/${postId}`);
     return { success: true };
